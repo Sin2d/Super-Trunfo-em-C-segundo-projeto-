@@ -1,0 +1,182 @@
+#include <stdio.h>
+#include <stdlib.h> // Para a função system("clear") ou system("cls")
+
+// Define a estrutura para armazenar os dados de uma carta de forma organizada.
+struct Carta {
+    char nomeCidade[50];
+    char estado[4];
+    unsigned long int populacao;
+    float area;
+    float pib; // Em bilhões de R$
+    int pontosTuristicos;
+    // Atributos calculados
+    float densidade;
+    float pibPerCapita;
+    float superPoder;
+};
+
+// Protótipo da função que exibe o menu
+void exibirMenu(int atributoJaEscolhido);
+
+int main() {
+    // --- SIMPLIFICAÇÃO: Usar cartas pré-cadastradas ---
+    struct Carta carta1, carta2;
+
+    // Definição da Carta 1: São Paulo
+    carta1.populacao = 12396372;
+    carta1.area = 1521.11;
+    carta1.pib = 763.8;
+    carta1.pontosTuristicos = 150;
+    sprintf(carta1.nomeCidade, "Sao Paulo");
+    sprintf(carta1.estado, "SP");
+
+    // Definição da Carta 2: Rio de Janeiro
+    carta2.populacao = 6775561;
+    carta2.area = 1200.32;
+    carta2.pib = 358.4;
+    carta2.pontosTuristicos = 200;
+    sprintf(carta2.nomeCidade, "Rio de Janeiro");
+    sprintf(carta2.estado, "RJ");
+
+    // --- Cálculos dos atributos derivados para ambas as cartas ---
+    carta1.densidade = (float)carta1.populacao / carta1.area;
+    carta1.pibPerCapita = (carta1.pib * 1e9) / carta1.populacao;
+    carta1.superPoder = carta1.populacao + carta1.area + (carta1.pib * 1e9) + carta1.pontosTuristicos + carta1.pibPerCapita - carta1.densidade;
+
+    carta2.densidade = (float)carta2.populacao / carta2.area;
+    carta2.pibPerCapita = (carta2.pib * 1e9) / carta2.populacao;
+    carta2.superPoder = carta2.populacao + carta2.area + (carta2.pib * 1e9) + carta2.pontosTuristicos + carta2.pibPerCapita - carta2.densidade;
+
+
+    // Variáveis para armazenar as escolhas do usuário
+    int escolha1 = 0, escolha2 = 0;
+    char nomeAtributo1[50], nomeAtributo2[50];
+    double valorAttr1_C1 = 0, valorAttr1_C2 = 0;
+    double valorAttr2_C1 = 0, valorAttr2_C2 = 0;
+
+    // ===============================================================
+    // 1. ESCOLHA DO PRIMEIRO ATRIBUTO
+    // ===============================================================
+    do {
+        system("clear || cls"); // Limpa a tela (funciona em Linux/Mac e Windows)
+        printf("===== SUPER TRUNFO: ESCOLHA DE ATRIBUTOS =====\n\n");
+        printf("--- CARTA 1: %s (%s) ---\n", carta1.nomeCidade, carta1.estado);
+        printf("--- CARTA 2: %s (%s) ---\n\n", carta2.nomeCidade, carta2.estado);
+
+        printf("Jogador, escolha o PRIMEIRO atributo para a disputa:\n");
+        exibirMenu(0); // 0 significa que nenhum atributo foi escolhido ainda
+        printf("\nSua escolha: ");
+        scanf("%d", &escolha1);
+
+        if (escolha1 < 1 || escolha1 > 7) {
+            printf("Opcao invalida! Pressione Enter para tentar novamente...");
+            getchar(); getchar(); // Pausa para o usuário ler a mensagem
+        }
+    } while (escolha1 < 1 || escolha1 > 7);
+
+    // ===============================================================
+    // 2. ESCOLHA DO SEGUNDO ATRIBUTO (MENU DINÂMICO)
+    // ===============================================================
+     do {
+        system("clear || cls");
+        printf("===== SUPER TRUNFO: ESCOLHA DE ATRIBUTOS =====\n\n");
+        printf("Primeiro atributo escolhido com sucesso!\n\n");
+        printf("Jogador, escolha o SEGUNDO atributo (deve ser diferente do primeiro):\n");
+        exibirMenu(escolha1); // Passa a primeira escolha para o menu não exibi-la
+        printf("\nSua escolha: ");
+        scanf("%d", &escolha2);
+
+        if (escolha2 < 1 || escolha2 > 7 || escolha2 == escolha1) {
+            printf("Opcao invalida ou repetida! Pressione Enter para tentar novamente...");
+            getchar(); getchar();
+        }
+    } while (escolha2 < 1 || escolha2 > 7 || escolha2 == escolha1);
+
+
+    // ===============================================================
+    // 3. PROCESSAMENTO DAS ESCOLHAS
+    // ===============================================================
+    // Switch para o primeiro atributo
+    switch(escolha1) {
+        case 1: sprintf(nomeAtributo1, "Populacao"); valorAttr1_C1 = carta1.populacao; valorAttr1_C2 = carta2.populacao; break;
+        case 2: sprintf(nomeAtributo1, "Area (km2)"); valorAttr1_C1 = carta1.area; valorAttr1_C2 = carta2.area; break;
+        case 3: sprintf(nomeAtributo1, "PIB (Bilhoes R$)"); valorAttr1_C1 = carta1.pib; valorAttr1_C2 = carta2.pib; break;
+        case 4: sprintf(nomeAtributo1, "Pontos Turisticos"); valorAttr1_C1 = carta1.pontosTuristicos; valorAttr1_C2 = carta2.pontosTuristicos; break;
+        case 5: sprintf(nomeAtributo1, "Densidade Pop."); valorAttr1_C1 = carta1.densidade; valorAttr1_C2 = carta2.densidade; break;
+        case 6: sprintf(nomeAtributo1, "PIB per Capita"); valorAttr1_C1 = carta1.pibPerCapita; valorAttr1_C2 = carta2.pibPerCapita; break;
+        case 7: sprintf(nomeAtributo1, "Super Poder"); valorAttr1_C1 = carta1.superPoder; valorAttr1_C2 = carta2.superPoder; break;
+    }
+
+    // Switch para o segundo atributo
+    switch(escolha2) {
+        case 1: sprintf(nomeAtributo2, "Populacao"); valorAttr2_C1 = carta1.populacao; valorAttr2_C2 = carta2.populacao; break;
+        case 2: sprintf(nomeAtributo2, "Area (km2)"); valorAttr2_C1 = carta1.area; valorAttr2_C2 = carta2.area; break;
+        case 3: sprintf(nomeAtributo2, "PIB (Bilhoes R$)"); valorAttr2_C1 = carta1.pib; valorAttr2_C2 = carta2.pib; break;
+        case 4: sprintf(nomeAtributo2, "Pontos Turisticos"); valorAttr2_C1 = carta1.pontosTuristicos; valorAttr2_C2 = carta2.pontosTuristicos; break;
+        case 5: sprintf(nomeAtributo2, "Densidade Pop."); valorAttr2_C1 = carta1.densidade; valorAttr2_C2 = carta2.densidade; break;
+        case 6: sprintf(nomeAtributo2, "PIB per Capita"); valorAttr2_C1 = carta1.pibPerCapita; valorAttr2_C2 = carta2.pibPerCapita; break;
+        case 7: sprintf(nomeAtributo2, "Super Poder"); valorAttr2_C1 = carta1.superPoder; valorAttr2_C2 = carta2.superPoder; break;
+    }
+
+
+    // ===============================================================
+    // 4. SOMA DOS VALORES E DETERMINAÇÃO DO VENCEDOR
+    // ===============================================================
+    double somaCarta1 = valorAttr1_C1 + valorAttr2_C1;
+    double somaCarta2 = valorAttr1_C2 + valorAttr2_C2;
+
+
+    // ===============================================================
+    // 5. EXIBIÇÃO CLARA DO RESULTADO
+    // ===============================================================
+    system("clear || cls");
+    printf("============================================\n");
+    printf("              RESULTADO DA RODADA\n");
+    printf("============================================\n\n");
+    printf("Atributos Comparados: %s e %s\n\n", nomeAtributo1, nomeAtributo2);
+
+    printf("--------------------------------------------\n");
+    printf("CARTA 1: %s (%s)\n", carta1.nomeCidade, carta1.estado);
+    printf("  > %-18s: %15.2f\n", nomeAtributo1, valorAttr1_C1);
+    printf("  > %-18s: %15.2f\n", nomeAtributo2, valorAttr2_C1);
+    printf("  > SOMA DOS VALORES: %17.2f\n", somaCarta1);
+    printf("--------------------------------------------\n");
+
+    printf("CARTA 2: %s (%s)\n", carta2.nomeCidade, carta2.estado);
+    printf("  > %-18s: %15.2f\n", nomeAtributo1, valorAttr1_C2);
+    printf("  > %-18s: %15.2f\n", nomeAtributo2, valorAttr2_C2);
+    printf("  > SOMA DOS VALORES: %17.2f\n", somaCarta2);
+    printf("--------------------------------------------\n\n");
+
+
+    if (somaCarta1 > somaCarta2) {
+        printf("VENCEDOR DA RODADA: CARTA 1 - %s!\n", carta1.nomeCidade);
+    } else if (somaCarta2 > somaCarta1) {
+        printf("VENCEDOR DA RODADA: CARTA 2 - %s!\n", carta2.nomeCidade);
+    } else {
+        // 4. Tratamento de Empates
+        printf("RESULTADO DA RODADA: Empate!\n");
+    }
+    printf("============================================\n");
+
+
+    return 0;
+}
+
+/**
+ * @brief Exibe o menu de atributos para o jogador.
+ *
+ * @param atributoJaEscolhido O número do atributo a ser omitido do menu.
+ * Se for 0, todos os atributos são exibidos.
+ */
+void exibirMenu(int atributoJaEscolhido) {
+    printf("-----------------------------------------\n");
+    if (atributoJaEscolhido != 1) printf(" [1] Populacao\n");
+    if (atributoJaEscolhido != 2) printf(" [2] Area (km2)\n");
+    if (atributoJaEscolhido != 3) printf(" [3] PIB (Bilhoes R$)\n");
+    if (atributoJaEscolhido != 4) printf(" [4] Pontos Turisticos\n");
+    if (atributoJaEscolhido != 5) printf(" [5] Densidade Populacional (menor vence)\n");
+    if (atributoJaEscolhido != 6) printf(" [6] PIB per Capita\n");
+    if (atributoJaEscolhido != 7) printf(" [7] Super Poder\n");
+    printf("-----------------------------------------\n");
+}
